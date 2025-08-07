@@ -1,80 +1,244 @@
-# House Price Prediction
+# House Price Prediction Service
 
-## Objetivo
+A machine learning service for predicting house prices based on features like size, location, and number of bedrooms.
 
-O objetivo deste projeto é prever os preços das casas com base em várias características, como tamanho, localização, número de quartos, entre outros. Utilizamos algoritmos de aprendizado de máquina para criar um modelo preditivo que pode estimar o preço de uma casa com base nesses atributos.
+## 🚀 Features
 
-## Instalação
+- **Machine Learning Model**: Linear Regression with preprocessing pipeline
+- **RESTful API**: FastAPI-based service with automatic documentation
+- **Data Validation**: Pydantic models for request/response validation
+- **Comprehensive Testing**: 100% code coverage with comprehensive test suite
+- **Docker Support**: Containerized application for consistent deployment
+- **Code Quality**: Type hints, docstrings, and organized imports
 
-### Pré-requisitos
+## 📋 Requirements
 
-Certifique-se de ter os seguintes softwares instalados em sua máquina:
+- Python 3.11+
+- Docker and Docker Compose
 
-- [Python 3.8+](https://www.python.org/downloads/)
-- [Docker](https://www.docker.com/get-started)
+## 🛠️ Installation
 
-### Passo a Passo
+### Using Docker (Recommended)
 
-1. **Clone o repositório:**
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd projects-ia-house-price-prediction
+   ```
 
-    ```bash
-    git clone https://github.com/seu-usuario/projects-ia-house-price-prediction.git
-    cd projects-ia-house-price-prediction
-    ```
+2. **Run the application**
+   ```bash
+   make runapp
+   ```
 
-2. **Crie e ative um ambiente virtual:**
+3. **Access the API**
+   - API Documentation: http://localhost:9000/docs
+   - Health Check: http://localhost:9000/health
+   - Root Endpoint: http://localhost:9000/
 
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate  # No Windows use `venv\Scripts\activate`
-    ```
+### Local Development
 
-3. **Instale as dependências do projeto:**
+1. **Create virtual environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # Linux/Mac
+   # or
+   venv\Scripts\activate  # Windows
+   ```
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+2. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-4. **Execute a aplicação usando Docker:**
+3. **Run the application**
+   ```bash
+   uvicorn app.main:app --reload
+   ```
 
-    ```bash
-    make runapp-dev
-    ```
+## 🧪 Testing
 
-5. **Acesse a API:**
+### Run all tests
+```bash
+make test
+```
 
-    A API estará disponível em `http://localhost:5000`.
+### Run specific test modules
+```bash
+# Test main application
+docker compose run --rm test pytest tests/test_main.py -v
 
-6. **Treine e teste o modelo:**
+# Test machine learning model
+docker compose run --rm test pytest tests/test_model.py -v
 
-    Siga os exemplos de uso da API fornecidos na seção anterior para treinar e testar o modelo.
+# Test API endpoints
+docker compose run --rm test pytest tests/test_views.py -v
+
+# Test data validation
+docker compose run --rm test pytest tests/test_schemas.py -v
+```
+
+### Coverage Report
+```bash
+docker compose run --rm test pytest tests/ --cov=app --cov-report=term-missing
+```
+
+## 📚 API Documentation
+
+### Endpoints
+
+#### `GET /`
+Returns service status and availability information.
+
+**Response:**
+```json
+{
+  "message": "House Price Prediction Service is online!",
+  "status": "healthy",
+  "model_ready": true
+}
+```
+
+#### `GET /health`
+Performs comprehensive health check of the service.
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "model_ready": true
+}
+```
+
+#### `POST /predict`
+Predicts house price based on input features.
+
+**Request:**
+```json
+{
+  "tamanho": 400.0,
+  "localizacao": "Centro",
+  "quantidade_quartos": 2
+}
+```
+
+**Response:**
+```json
+{
+  "price": 896983.92
+}
+```
+
+## 🔧 Development
+
+### Project Structure
+```
+projects-ia-house-price-prediction/
+├── app/
+│   ├── __init__.py
+│   ├── main.py          # FastAPI application
+│   ├── model.py         # Machine learning model
+│   ├── schemas.py       # Pydantic models
+│   └── views.py         # API endpoints
+├── data/
+│   └── house_prices.csv # Training data
+├── tests/
+│   ├── test_main.py     # Application tests
+│   ├── test_model.py    # Model tests
+│   ├── test_schemas.py  # Schema tests
+│   └── test_views.py    # Endpoint tests
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+├── Makefile
+└── README.md
+```
+
+### Available Commands
+
+```bash
+# Run application
+make runapp
+
+# Run application in development mode
+make runapp-dev
+
+# Run tests
+make test
+
+# Code formatting and linting
+make lint
+```
+
+### Machine Learning Model
+
+The service uses a Linear Regression model with the following preprocessing:
+
+- **Numerical Features**: StandardScaler normalization
+- **Categorical Features**: OneHotEncoder encoding
+- **Pipeline**: scikit-learn Pipeline for consistent preprocessing
+
+### Data Format
+
+Training data should be in CSV format with the following columns:
+- `tamanho`: House size in square meters
+- `localizacao`: House location/neighborhood
+- `quantidade_quartos`: Number of bedrooms
+- `price`: Target variable (house price)
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+1. **Docker build fails**
+   - Ensure Docker is running
+   - Check available disk space
+
+2. **Tests fail**
+   - Run `docker compose down` to clean containers
+   - Rebuild with `docker compose build --no-cache`
+
+3. **Model not found error**
+   - Ensure training data exists in `data/house_prices.csv`
+   - Run model training first
+
+4. **Port conflicts**
+   - Change port in `docker-compose.yml` if 9000 is in use
+
+### Logs
+
+View application logs:
+```bash
+docker compose logs web
+```
+
+View test logs:
+```bash
+docker compose logs test
+```
 
 
-## Uso da API
+## 🤝 Contributing
 
-1. Inicie o servidor:
-    ```bash
-    python app.py
-    ```
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Ensure 100% test coverage
+6. Submit a pull request
 
-2. Faça uma requisição para a API:
-    ```bash
-    curl -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" -d '{
-        "tamanho": 120,
-        "localizacao": "Centro",
-        "quantidade_quartos": 3
-    }'
-    ```
+### Code Standards
 
-3. Exemplo de resposta:
-    ```json
-    {
-        "preco": 450000
-    }
-    ```
+- Follow PEP 8 style guide
+- Use type hints for all functions
+- Add docstrings for all modules, classes, and functions
+- Organize imports (standard → third-party → local)
+- Write comprehensive tests
 
-## Contribuição
-Sinta-se à vontade para contribuir com este projeto. Para isso, faça um fork do repositório, crie uma nova branch com sua feature ou correção de bug, e envie um pull request.
+## 📄 License
 
-## Licença
-Este projeto está licenciado sob a Licença MIT. Veja o arquivo LICENSE para mais detalhes.
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🆕 Version History
+
+See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
