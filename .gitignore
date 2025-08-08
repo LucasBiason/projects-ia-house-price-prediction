@@ -266,3 +266,4 @@ local/
 dev/
 test_data/
 temp/
+.coverage
